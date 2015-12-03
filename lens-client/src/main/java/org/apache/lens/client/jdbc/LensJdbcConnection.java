@@ -43,8 +43,13 @@ public class LensJdbcConnection implements Connection {
   public LensJdbcConnection(String uri, Properties info) {
     LensConnectionParams params = JDBCUtils.parseUrl(uri);
     connection = new LensConnection(params);
+
     // TODO: should we prompt here?
     connection.open("");
+    connection.setConnectionParams("lens.query.enable.persistent.resultset","false");
+    connection.setConnectionParams("lens.query.enable.persistent.resultset.indriver","false");
+
+
   }
 
   /*
@@ -55,7 +60,7 @@ public class LensJdbcConnection implements Connection {
   @Override
   public Statement createStatement() throws SQLException {
 
-    return createStatement(ResultSet.CONCUR_READ_ONLY, ResultSet.TYPE_FORWARD_ONLY);
+    return createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
   }
 
   /*

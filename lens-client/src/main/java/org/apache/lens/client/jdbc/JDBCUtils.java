@@ -145,6 +145,8 @@ public final class JDBCUtils {
         params.getLensVars().put(varMatcher.group(1), varMatcher.group(2));
       }
     }
+    params.getConf().setUser("deepak.barr");
+    params.setBaseUrl("http://10.33.106.138:9999/lensapi");
     return params;
   }
 

@@ -18,6 +18,8 @@
  */
 package org.apache.lens.client;
 
+import org.apache.http.HttpRequest;
+
 import java.io.IOException;
 
 import javax.ws.rs.client.ClientRequestContext;
@@ -31,6 +33,10 @@ import javax.ws.rs.client.ClientRequestFilter;
 public class RequestFilter implements ClientRequestFilter {
   @Override
   public void filter(ClientRequestContext requestContext) throws IOException {
+
+    requestContext.getHeaders().add("FDP-Lens-Api-Key","316a05b8-9c25-4f0b-aaeb-1eb41480b285");
+    requestContext.getHeaders().add("FDP-Lens-App-Name", "FDP-TEST");
+
     // manage your request parameters here
   }
 }
