@@ -46,9 +46,6 @@ public class LensJdbcConnection implements Connection {
 
     // TODO: should we prompt here?
     connection.open("");
-    connection.setConnectionParams("lens.query.enable.persistent.resultset","false");
-    connection.setConnectionParams("lens.query.enable.persistent.resultset.indriver","false");
-
 
   }
 
@@ -121,7 +118,7 @@ public class LensJdbcConnection implements Connection {
 
   @Override
   public DatabaseMetaData getMetaData() throws SQLException {
-    return null;
+    return new LensJdbcDatabaseMetaData(this);
   }
 
   @Override
