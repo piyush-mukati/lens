@@ -841,7 +841,7 @@ if(tableName.matches(tableNamePattern)){
         List<Object> row= Arrays.asList(new Object[24]);
         row.set(2, tableName);
         row.set(3, column.getName());
-        row.set(4, getSqlTypeFromName(column.getType()));
+        row.set(4, JDBCUtils.getSQLType(column.getType()));
         row.set(5, column.getType());
 
         row.set(9, 10);
@@ -1187,21 +1187,5 @@ if(tableName.matches(tableNamePattern)){
     public boolean isWrapperFor(Class<?> iface) throws SQLException {
         return false;
     }
-    private int  getSqlTypeFromName(String type) {
-      log.debug("getSqlTypeFromName {} ",type);
-        switch (type) {
-            case "string":
-                return Types.VARCHAR;
-            case "int":
-                return Types.INTEGER;
-            case "double":
-                return Types.DOUBLE;
-            case "bigint":
-                return Types.BIGINT;
-            case "timestamp":
-                return Types.TIMESTAMP;
-        }
 
-        return Types.OTHER;
-    }
 }
