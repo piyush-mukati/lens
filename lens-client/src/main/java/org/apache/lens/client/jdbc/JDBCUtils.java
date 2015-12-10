@@ -145,7 +145,7 @@ public final class JDBCUtils {
         params.getLensVars().put(varMatcher.group(1), varMatcher.group(2));
       }
     }
-    params.setBaseUrl("http://"+jdbcUri.getHost()+":" + jdbcUri.getPort()+"/lensapi");
+    params.setBaseUrl("http://" + jdbcUri.getHost() + ":" + jdbcUri.getPort() + "/lensapi");
     return params;
   }
 
