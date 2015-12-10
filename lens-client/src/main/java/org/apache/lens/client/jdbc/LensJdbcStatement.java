@@ -58,6 +58,7 @@ public class LensJdbcStatement implements Statement {
   @Override
   public ResultSet executeQuery(String s) throws SQLException {
     try {
+      log.debug(s);
       statement.execute(s, null);
     } catch (LensAPIException e) {
       log.error("Execution Failed for Statement:{}", s, e);
