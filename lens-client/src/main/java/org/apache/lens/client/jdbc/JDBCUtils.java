@@ -32,6 +32,8 @@ import java.util.jar.Manifest;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.ws.rs.core.UriBuilder;
+
 import org.apache.lens.client.LensConnectionParams;
 
 /**
@@ -145,7 +147,8 @@ public final class JDBCUtils {
         params.getLensVars().put(varMatcher.group(1), varMatcher.group(2));
       }
     }
-    params.setBaseUrl("http://" + jdbcUri.getHost() + ":" + jdbcUri.getPort() + "/lensapi");
+    params.setBaseUrl(UriBuilder.fromUri("http://" + jdbcUri.getHost()).port(jdbcUri.getPort()).path("/lensapi")
+      .build().toString());
     return params;
   }
 
