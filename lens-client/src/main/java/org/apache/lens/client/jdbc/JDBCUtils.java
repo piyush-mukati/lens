@@ -149,6 +149,7 @@ public final class JDBCUtils {
     }
     params.setBaseUrl(UriBuilder.fromUri("http://" + jdbcUri.getHost()).port(jdbcUri.getPort()).path("/lensapi")
       .build().toString());
+    params.getConf().setUser("deepak.barr");
     return params;
   }
 

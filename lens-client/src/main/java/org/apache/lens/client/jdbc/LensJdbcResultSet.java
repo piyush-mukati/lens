@@ -109,8 +109,11 @@ public class LensJdbcResultSet implements ResultSet {
   @Override
   public void close() throws SQLException {
     closed = true;
+    //doing a null check  because we can genrate  Resultset from meta API's without a query and statment.
+    if(statement!=null){
     statement.closeResultSet();
     statement.close();
+  }
   }
 
   /*

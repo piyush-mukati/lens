@@ -43,8 +43,10 @@ public class LensJdbcConnection implements Connection {
   public LensJdbcConnection(String uri, Properties info) {
     LensConnectionParams params = JDBCUtils.parseUrl(uri);
     connection = new LensConnection(params);
+
     // TODO: should we prompt here?
     connection.open("");
+
   }
 
   /*
@@ -116,7 +118,7 @@ public class LensJdbcConnection implements Connection {
 
   @Override
   public DatabaseMetaData getMetaData() throws SQLException {
-    return null;
+    return new LensJdbcDatabaseMetaData(this);
   }
 
   @Override
