@@ -26,9 +26,13 @@ import java.util.concurrent.Executor;
 import org.apache.lens.client.LensConnection;
 import org.apache.lens.client.LensConnectionParams;
 
+import lombok.extern.slf4j.Slf4j;
+
+
 /**
  * JDBC connection class which handles connection level operations to lens server.
  */
+@Slf4j
 public class LensJdbcConnection implements Connection {
 
   /** The connection. */
@@ -277,7 +281,8 @@ public class LensJdbcConnection implements Connection {
 
   @Override
   public void setReadOnly(boolean b) throws SQLException {
-    throw new SQLException("Operation not supported!!!!");
+    log.debug("setReadOnly {}",b);
+    // throw new SQLException("Operation not supported!!!!");
   }
 
   @Override
