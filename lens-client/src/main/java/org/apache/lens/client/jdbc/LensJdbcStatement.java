@@ -387,12 +387,15 @@ public class LensJdbcStatement implements Statement {
 
   @Override
   public int getMaxRows() throws SQLException {
-    throw new SQLException("Operation not supported!!!");
+   return 10000;
+    // throw new SQLException("Operation not supported!!!");
   }
 
   @Override
   public void setMaxRows(int i) throws SQLException {
-    throw new SQLException("Operation not supported!!!");
+    log.debug("setMaxRows {}" ,i );
+
+    //throw new SQLException("Operation not supported!!!");
   }
 
   @Override
