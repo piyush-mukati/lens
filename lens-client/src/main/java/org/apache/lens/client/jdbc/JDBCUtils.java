@@ -242,39 +242,39 @@ public final class JDBCUtils {
    */
   public static int getSQLType(String type) throws SQLException {
 
-    if (type!=null && type.startsWith("string")) {
+    if (type!=null && type.toLowerCase().startsWith("string")) {
       return Types.VARCHAR;
-    } else if (type!=null && type.startsWith("varchar")) {
+    } else if (type!=null && type.toLowerCase().startsWith("varchar")) {
       return Types.VARCHAR;
-    } else if (type!=null && type.startsWith("char")) {
+    } else if (type!=null && type.toLowerCase().startsWith("char")) {
       return Types.CHAR;
-    } else if (type!=null && type.startsWith("float")) {
+    } else if (type!=null && type.toLowerCase().startsWith("float")) {
       return Types.FLOAT;
-    } else if (type!=null && type.startsWith("double")) {
+    } else if (type!=null && type.toLowerCase().startsWith("double")) {
       return Types.DOUBLE;
-    } else if ( type!=null && type.startsWith("boolean") ) {
+    } else if ( type!=null && type.toLowerCase().startsWith("boolean") ) {
       return Types.BOOLEAN;
-    } else if (type!=null && type.startsWith("tinyint")) {
+    } else if (type!=null && type.toLowerCase().startsWith("tinyint")) {
       return Types.TINYINT;
-    } else if ( type!=null && type.startsWith("smallint") ) {
+    } else if ( type!=null && type.toLowerCase().startsWith("smallint") ) {
       return Types.SMALLINT;
-    } else if ( type!=null && type.startsWith("int")) {
+    } else if ( type!=null && type.toLowerCase().startsWith("int")) {
       return Types.INTEGER;
-    } else if ( type!=null && type.startsWith("bigint") ) {
+    } else if ( type!=null && type.toLowerCase().startsWith("bigint") ) {
       return Types.BIGINT;
-    } else if ( type!=null && type.startsWith("date") ) {
+    } else if ( type!=null && type.toLowerCase().startsWith("date") ) {
       return Types.DATE;
-    } else if ( type!=null && type.startsWith("timestamp")) {
+    } else if ( type!=null && type.toLowerCase().startsWith("timestamp")) {
       return Types.TIMESTAMP;
-    } else if (type!=null && type.startsWith("decimal")) {
+    } else if (type!=null && type.toLowerCase().startsWith("decimal")) {
       return Types.DECIMAL;
-    } else if (type!=null && type.startsWith("binary")) {
+    } else if (type!=null && type.toLowerCase().startsWith("binary")) {
       return Types.BINARY;
-    } else if (type!=null && type.startsWith("map") ) {
+    } else if (type!=null && type.toLowerCase().startsWith("map") ) {
       return Types.JAVA_OBJECT;
-    } else if (type!=null && type.startsWith("array")) {
+    } else if (type!=null && type.toLowerCase().startsWith("array")) {
       return Types.ARRAY;
-    } else if (type!=null && type.startsWith("struct") ) {
+    } else if (type!=null && type.toLowerCase().startsWith("struct") ) {
       return Types.STRUCT;
     }
     throw new SQLException("Unrecognized column type: " + type);
