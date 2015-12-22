@@ -242,39 +242,39 @@ public final class JDBCUtils {
    */
   public static int getSQLType(String type) throws SQLException {
 
-    if ("string".equalsIgnoreCase(type)) {
+    if (type!=null && type.startsWith("string")) {
       return Types.VARCHAR;
-    } else if ("varchar".equalsIgnoreCase(type)) {
+    } else if (type!=null && type.startsWith("varchar")) {
       return Types.VARCHAR;
-    } else if ("char".equalsIgnoreCase(type)) {
+    } else if (type!=null && type.startsWith("char")) {
       return Types.CHAR;
-    } else if ("float".equalsIgnoreCase(type)) {
+    } else if (type!=null && type.startsWith("float")) {
       return Types.FLOAT;
-    } else if ("double".equalsIgnoreCase(type)) {
+    } else if (type!=null && type.startsWith("double")) {
       return Types.DOUBLE;
-    } else if ("boolean".equalsIgnoreCase(type)) {
+    } else if ( type!=null && type.startsWith("boolean") ) {
       return Types.BOOLEAN;
-    } else if ("tinyint".equalsIgnoreCase(type)) {
+    } else if (type!=null && type.startsWith("tinyint")) {
       return Types.TINYINT;
-    } else if ("smallint".equalsIgnoreCase(type)) {
+    } else if ( type!=null && type.startsWith("smallint") ) {
       return Types.SMALLINT;
-    } else if ("int".equalsIgnoreCase(type)) {
+    } else if ( type!=null && type.startsWith("int")) {
       return Types.INTEGER;
-    } else if ("bigint".equalsIgnoreCase(type)) {
+    } else if ( type!=null && type.startsWith("bigint") ) {
       return Types.BIGINT;
-    } else if ("date".equalsIgnoreCase(type)) {
+    } else if ( type!=null && type.startsWith("date") ) {
       return Types.DATE;
-    } else if ("timestamp".equalsIgnoreCase(type)) {
+    } else if ( type!=null && type.startsWith("timestamp")) {
       return Types.TIMESTAMP;
-    } else if ("decimal".equalsIgnoreCase(type)) {
+    } else if (type!=null && type.startsWith("decimal")) {
       return Types.DECIMAL;
-    } else if ("binary".equalsIgnoreCase(type)) {
+    } else if (type!=null && type.startsWith("binary")) {
       return Types.BINARY;
-    } else if ("map".equalsIgnoreCase(type)) {
+    } else if (type!=null && type.startsWith("map") ) {
       return Types.JAVA_OBJECT;
-    } else if ("array".equalsIgnoreCase(type)) {
+    } else if (type!=null && type.startsWith("array")) {
       return Types.ARRAY;
-    } else if ("struct".equalsIgnoreCase(type)) {
+    } else if (type!=null && type.startsWith("struct") ) {
       return Types.STRUCT;
     }
     throw new SQLException("Unrecognized column type: " + type);

@@ -25,6 +25,7 @@ import java.util.concurrent.Executor;
 
 import org.apache.lens.client.LensConnection;
 import org.apache.lens.client.LensConnectionParams;
+import org.apache.lens.client.LensMetadataClient;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -37,6 +38,7 @@ public class LensJdbcConnection implements Connection {
 
   /** The connection. */
   private final LensConnection connection;
+  private final LensMetadataClient metadataClient;
 
   /**
    * Instantiates a new lens jdbc connection.
@@ -50,7 +52,7 @@ public class LensJdbcConnection implements Connection {
 
     // TODO: should we prompt here?
     connection.open("");
-
+    metadataClient= new LensMetadataClient(connection);
   }
 
   /*
@@ -456,11 +458,11 @@ public class LensJdbcConnection implements Connection {
   }
 
   public void setSchema(String schema) throws SQLException {
-    throw new SQLException("Operation not supported!!!");
+    metadataClient.setDatabase(schema);
   }
 
   public String getSchema() throws SQLException {
-    throw new SQLException("Operation not supported!!!");
+  return  metadataClient.getCurrentDatabase();
   }
 
   /**

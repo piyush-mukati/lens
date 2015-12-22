@@ -22,6 +22,9 @@ import java.sql.*;
 
 import org.apache.lens.client.LensStatement;
 import org.apache.lens.client.exceptions.LensAPIException;
+import org.apache.lens.server.api.error.LensException;
+
+import org.apache.hadoop.hive.conf.HiveConf;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -39,6 +42,8 @@ public class LensJdbcStatement implements Statement {
 
   /** The closed. */
   private boolean closed;
+
+  private int limit;
 
   /**
    * Instantiates a new lens jdbc statement.
@@ -58,15 +63,42 @@ public class LensJdbcStatement implements Statement {
   @Override
   public ResultSet executeQuery(String s) throws SQLException {
     try {
-      System.out.println("yellowfin.out:"+s);
-      log.debug("yellowfin.debug:"+s);
+      log.debug(s);
+      s=s.replaceAll("\"","`");
+      log.debug(s);
+
+      QueryRewriter queryRewriter=new QueryRewriter();
+      log.debug(s);
+
+      HiveConf hc=new HiveConf();
+      log.debug(s);
+
+      String dbname=getConnection().getSchema();
+      log.debug(s);
+
+      s=queryRewriter.rewrite(s,dbname,hc,getMaxRows());
+      log.debug(s);
       statement.execute(s, null);
     } catch (LensAPIException e) {
       log.error("Execution Failed for Statement:{}", s, e);
+    } catch (LensException e) {
+      e.printStackTrace();
     }
     return new LensJdbcResultSet(statement.getResultSet(), statement.getResultSetMetaData(), this);
   }
 
+  @Override
+  public int getMaxRows() throws SQLException {
+    return limit;
+    // throw new SQLException("Operation not supported!!!");
+  }
+
+  @Override
+  public void setMaxRows(int i) throws SQLException {
+    log.debug("setMaxRows {}" ,i );
+limit=i;
+    //throw new SQLException("Operation not supported!!!");
+  }
   /*
    * (non-Javadoc)
    *
@@ -385,18 +417,7 @@ public class LensJdbcStatement implements Statement {
 
   }
 
-  @Override
-  public int getMaxRows() throws SQLException {
-   return 10000;
-    // throw new SQLException("Operation not supported!!!");
-  }
 
-  @Override
-  public void setMaxRows(int i) throws SQLException {
-    log.debug("setMaxRows {}" ,i );
-
-    //throw new SQLException("Operation not supported!!!");
-  }
 
   @Override
   public void setEscapeProcessing(boolean b) throws SQLException {
