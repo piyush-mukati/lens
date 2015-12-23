@@ -174,6 +174,8 @@ public class SelectQueryTranslator {
         return "inner join";
       case TOK_UNIQUEJOIN:
         return "unique join";
+      case TOK_CROSSJOIN:
+        return "join";
       default:
         return null;
     }

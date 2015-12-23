@@ -673,9 +673,13 @@ public class LensJdbcDatabaseMetaData implements DatabaseMetaData {
     @Override
     public ResultSet getTables(String catalog, String schemaPattern, String tableNamePattern, final String[] types) throws SQLException {
 
+
         //TODO: type, statement , table param
 
         log.debug("getTables called {} {} {} {}",catalog,schemaPattern,tableNamePattern,types);
+
+        if(schemaPattern==null)schemaPattern="%";
+        if(tableNamePattern==null)tableNamePattern="%";
 
 
        ArrayList<ResultRow> results= new ArrayList<ResultRow>();
@@ -824,6 +828,11 @@ public class LensJdbcDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public ResultSet getColumns(String catalog, String schemaPattern, String tableNamePattern, String columnNamePattern) throws SQLException {
+
+        if(schemaPattern==null)schemaPattern="%";
+        if(tableNamePattern==null)tableNamePattern="%";
+        if(columnNamePattern==null)columnNamePattern="%";
+
         log.debug("getColumns is called with {} {} {} {}",catalog,schemaPattern,tableNamePattern,columnNamePattern);
         tableNamePattern=tableNamePattern.replace(".", "\\.");
         tableNamePattern= tableNamePattern.replaceAll("\\?", ".");
@@ -1114,6 +1123,9 @@ if(tableName.matches(tableNamePattern)){
 
     @Override
     public ResultSet getSchemas(String catalog, String schemaPattern) throws SQLException {
+
+        if(schemaPattern==null)schemaPattern="%";
+        
 
         log.debug("getSchemas is called with {} {} ",catalog,schemaPattern);
         schemaPattern=schemaPattern.replace(".", "\\.");
