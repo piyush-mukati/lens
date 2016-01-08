@@ -143,41 +143,45 @@ public class LensConnection {
    */
   public LensSessionHandle open(String password) {
 
-    WebTarget target = getSessionWebTarget();
-    FormDataMultiPart mp = new FormDataMultiPart();
-    mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("username").build(), params.getUser()));
-    mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("password").build(), password));
-
-    String database = params.getDbName();
-    mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("database").build(), database));
-
-    mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("sessionconf").fileName("sessionconf").build(),
-      params.getSessionConf(), MediaType.APPLICATION_XML_TYPE));
-    try {
-      Response response = target.request().post(Entity.entity(mp, MediaType.MULTIPART_FORM_DATA_TYPE));
-      if (response.getStatus() != 200) {
-        throw new LensClientServerConnectionException(response.getStatus());
-      }
-      final LensSessionHandle handle = response.readEntity(LensSessionHandle.class);
-      if (handle != null) {
-        sessionHandle = handle;
-        log.debug("Created a new session {}", sessionHandle.getPublicId());
-      } else {
-        throw new IllegalStateException("Unable to connect to lens " + "server with following paramters" + params);
-      }
-    } catch (ProcessingException e) {
-      if (e.getCause() != null && e.getCause() instanceof ConnectException) {
-        throw new LensClientServerConnectionException(e.getCause().getMessage(), e);
-      }
-    }
 
     log.debug("Successfully switched to database {}", params.getDbName());
     open.set(true);
-
+      sessionHandle =  createSession(params.getUser(),password);;
     return sessionHandle;
   }
 
-  /**
+    private  LensSessionHandle createSession(String username,String password) {
+        LensSessionHandle handle=null;
+        WebTarget target = getSessionWebTarget();
+        FormDataMultiPart mp = new FormDataMultiPart();
+        mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("username").build(), username));
+        mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("password").build(), password));
+
+        String database = params.getDbName();
+        mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("database").build(), database));
+
+        mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("sessionconf").fileName("sessionconf").build(),
+          params.getSessionConf(), MediaType.APPLICATION_XML_TYPE));
+        try {
+          Response response = target.request().post(Entity.entity(mp, MediaType.MULTIPART_FORM_DATA_TYPE));
+          if (response.getStatus() != 200) {
+            throw new LensClientServerConnectionException(response.getStatus());
+          }
+          handle= response.readEntity(LensSessionHandle.class);
+          if (handle != null) {
+            log.debug("Created a new session {}", handle.getPublicId());
+          } else {
+            throw new IllegalStateException("Unable to connect to lens " + "server with following paramters" + params);
+          }
+        } catch (ProcessingException e) {
+          if (e.getCause() != null && e.getCause() instanceof ConnectException) {
+            throw new LensClientServerConnectionException(e.getCause().getMessage(), e);
+          }
+        }
+    return handle;
+    }
+
+    /**
    * Attach database to session.
    *
    * @return the API result
