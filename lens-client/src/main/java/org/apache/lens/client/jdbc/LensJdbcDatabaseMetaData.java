@@ -932,9 +932,9 @@ if(tableName.matches(tableNamePattern)){
         columns.set(0, new ResultColumn("TABLE_CAT", ResultColumnType.STRING));
         columns.set(1, new ResultColumn("TABLE_SCHEM", ResultColumnType.STRING));
         columns.set(2, new ResultColumn("TABLE_NAME", ResultColumnType.STRING));
-        columns.set(3, new ResultColumn("TABLE_SCHEM", ResultColumnType.STRING));
-        columns.set(4, new ResultColumn("COLUMN_NAME", ResultColumnType.STRING));
-        columns.set(5, new ResultColumn("KEY_SEQ", ResultColumnType.STRING));
+        columns.set(3, new ResultColumn("COLUMN_NAME", ResultColumnType.STRING));
+        columns.set(4, new ResultColumn("KEY_SEQ", ResultColumnType.STRING));
+        columns.set(5, new ResultColumn("PK_NAME", ResultColumnType.STRING));
 
         return new LensJdbcResultSet(new InMemoryQueryResult(results), new QueryResultSetMetadata(columns), null);
 
