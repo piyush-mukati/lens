@@ -51,13 +51,17 @@ import lombok.extern.slf4j.Slf4j;
 public class LensConnection {
 
   /** The params. */
+  @Getter
   private final LensConnectionParams params;
+
+  private  LensClientUserContextResolver userContextResolver;
+  private  LensClientSessionResolver sessionResolver;
 
   /** The open. */
   private AtomicBoolean open = new AtomicBoolean(false);
 
   /** The session handle. */
-  @Getter
+
   private LensSessionHandle sessionHandle;
 
   /**
@@ -142,46 +146,47 @@ public class LensConnection {
    * @return the lens session handle
    */
   public LensSessionHandle open(String password) {
-
-
-    log.debug("Successfully switched to database {}", params.getDbName());
+    //todo from param
+    userContextResolver=new LensClientUserContextResolverImpl(this);
+    sessionResolver =new LensClientSessionResolverImpl(this);
+    final LensSessionHandle handle= sessionResolver.getSession(userContextResolver.getContext());
     open.set(true);
-      sessionHandle =  createSession(params.getUser(),password);;
-    return sessionHandle;
+    log.debug("Successfully switched to database {}", params.getDbName());
+    return handle;
   }
 
-    private  LensSessionHandle createSession(String username,String password) {
-        LensSessionHandle handle=null;
-        WebTarget target = getSessionWebTarget();
-        FormDataMultiPart mp = new FormDataMultiPart();
-        mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("username").build(), username));
-        mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("password").build(), password));
+  public LensSessionHandle createSession(String username, String password) {
+    LensSessionHandle handle = null;
+    WebTarget target = getSessionWebTarget();
+    FormDataMultiPart mp = new FormDataMultiPart();
+    mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("username").build(), username));
+    mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("password").build(), password));
 
-        String database = params.getDbName();
-        mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("database").build(), database));
+    String database = params.getDbName();
+    mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("database").build(), database));
 
-        mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("sessionconf").fileName("sessionconf").build(),
-          params.getSessionConf(), MediaType.APPLICATION_XML_TYPE));
-        try {
-          Response response = target.request().post(Entity.entity(mp, MediaType.MULTIPART_FORM_DATA_TYPE));
-          if (response.getStatus() != 200) {
-            throw new LensClientServerConnectionException(response.getStatus());
-          }
-          handle= response.readEntity(LensSessionHandle.class);
-          if (handle != null) {
-            log.debug("Created a new session {}", handle.getPublicId());
-          } else {
-            throw new IllegalStateException("Unable to connect to lens " + "server with following paramters" + params);
-          }
-        } catch (ProcessingException e) {
-          if (e.getCause() != null && e.getCause() instanceof ConnectException) {
-            throw new LensClientServerConnectionException(e.getCause().getMessage(), e);
-          }
-        }
-    return handle;
+    mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("sessionconf").fileName("sessionconf").build(),
+      params.getSessionConf(), MediaType.APPLICATION_XML_TYPE));
+    try {
+      Response response = target.request().post(Entity.entity(mp, MediaType.MULTIPART_FORM_DATA_TYPE));
+      if (response.getStatus() != 200) {
+        throw new LensClientServerConnectionException(response.getStatus());
+      }
+      handle = response.readEntity(LensSessionHandle.class);
+      if (handle != null) {
+        log.debug("Created a new session {}", handle.getPublicId());
+      } else {
+        throw new IllegalStateException("Unable to connect to lens " + "server with following paramters" + params);
+      }
+    } catch (ProcessingException e) {
+      if (e.getCause() != null && e.getCause() instanceof ConnectException) {
+        throw new LensClientServerConnectionException(e.getCause().getMessage(), e);
+      }
     }
+    return handle;
+  }
 
-    /**
+  /**
    * Attach database to session.
    *
    * @return the API result
@@ -327,5 +332,8 @@ public class LensConnection {
     sb.append("sessionHandle=").append(sessionHandle.getPublicId());
     sb.append('}');
     return sb.toString();
+  }
+  public LensSessionHandle getSessionHandle(){
+    return sessionResolver.getSession(userContextResolver.getContext());
   }
 }

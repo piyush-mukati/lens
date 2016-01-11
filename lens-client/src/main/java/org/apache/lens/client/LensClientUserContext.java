@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -18,26 +18,14 @@
  */
 package org.apache.lens.client;
 
-import org.apache.http.HttpRequest;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-import java.io.IOException;
+@AllArgsConstructor
+public class LensClientUserContext {
+  @Getter
+  private final String userName;
+  @Getter
+  private final String passWord;
 
-import javax.ws.rs.client.ClientRequestContext;
-import javax.ws.rs.client.ClientRequestFilter;
-
-
-/**
- * Manage Client Request.
- */
-
-public class RequestFilter implements ClientRequestFilter {
-  @Override
-  public void filter(ClientRequestContext requestContext) throws IOException {
-
-
-    // manage your request parameters here
-    requestContext.getHeaders().add("FDP-Lens-Api-Key", "316a05b8-9c25-4f0b-aaeb-1eb41480b285");
-    requestContext.getHeaders().add("FDP-Lens-App-Name", "FDP-TEST");
-
-  }
 }

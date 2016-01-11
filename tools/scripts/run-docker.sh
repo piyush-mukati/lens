@@ -37,4 +37,4 @@ done
 BASEDIR=`dirname ${PRG}`
 BASEDIR=`cd ${BASEDIR}/../..;pwd`
 echo "Lens Basedir is ->" $BASEDIR
-docker run -itP -v $BASEDIR:/opt/lens lens-test-docker
+docker run -it  --publish-all=true  -p 9999:9999 -p 9998:9998 -v $BASEDIR:/opt/lens lens-test-docker

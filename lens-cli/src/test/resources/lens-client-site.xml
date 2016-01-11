@@ -25,7 +25,7 @@
 
   <property>
     <name>lens.server.base.url</name>
-    <value>http://localhost:10057/lensapi</value>
+      <value>http://10.33.90.11:9999/lensapi</value>
     <description>The base url for the lens server</description>
   </property>
 

@@ -33,7 +33,7 @@
   </property>
   <property>
     <name>lens.server.base.url</name>
-    <value>http://0.0.0.0:9999/lensapi</value>
+    <value>http://10.33.90.11:9999/lensapi</value>
     <description>The base url for the lens server</description>
   </property>
   <property>
