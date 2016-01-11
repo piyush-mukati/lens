@@ -40,6 +40,9 @@ public class LensClientConfig extends Configuration {
   public static final String CLIENT_PFX = "lens.client.";
 
   /** The Constant DBNAME_KEY. */
+  public static final String SESSION_PROVIDER = CLIENT_PFX + "session.provider";
+
+  /** The Constant DBNAME_KEY. */
   public static final String DBNAME_KEY = CLIENT_PFX + "dbname";
 
   /** The Constant DEFAULT_DBNAME_VALUE. */
@@ -82,6 +85,10 @@ public class LensClientConfig extends Configuration {
 
   public static final String WS_FILTER_IMPL_SFX = ".ws.filter.impl";
 
+  public String getSessionProvider() {
+    return this.get(SESSION_PROVIDER);
+  }
+
   /**
    * Get the username from config
    *
@@ -90,6 +97,7 @@ public class LensClientConfig extends Configuration {
   public String getUser() {
     return this.get(USER_NAME, DEFAULT_USER_NAME);
   }
+
 
   public void setUser(String user) {
     this.set(USER_NAME, user);
