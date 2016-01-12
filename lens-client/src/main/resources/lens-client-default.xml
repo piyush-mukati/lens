@@ -58,7 +58,8 @@
     </property>
     <property>
         <name>lens.client.userContextResolverClass</name>
-        <value>org.apache.lens.client.LensClientUserContextResolverImpl</value>
+        <value>FdpLensClientUserContextResolver</value>
         <description>class to provide user context</description>
     </property>
+
 </configuration>
