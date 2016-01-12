@@ -19,7 +19,9 @@
 package org.apache.lens.client;
 
 
-
 public interface LensClientUserContextResolver {
   LensClientUserContext getContext();
+
+  void init(LensConnection connection);
+  void close();
 }

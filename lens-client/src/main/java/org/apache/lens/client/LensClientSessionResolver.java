@@ -27,4 +27,9 @@ import org.apache.lens.api.LensSessionHandle;
 public interface LensClientSessionResolver {
 
   LensSessionHandle getSession(LensClientUserContext context);
+
+  void init(LensConnection connection);
+  void close();
+
+
 }

@@ -19,14 +19,30 @@
 package org.apache.lens.client;
 
 
-public class LensClientUserContextResolverImpl implements LensClientUserContextResolver{
-  final LensConnection connection;
-  public LensClientUserContextResolverImpl(LensConnection connection){
-    this.connection=connection;
+import com.google.common.base.Preconditions;
+
+public class LensClientUserContextResolverImpl implements LensClientUserContextResolver {
+  LensConnection connection;
+
+  public LensClientUserContextResolverImpl() {
+
   }
 
   @Override
   public LensClientUserContext getContext() {
-    return new LensClientUserContext(connection.getParams().getUser(),"");
+    Preconditions.checkNotNull(connection, this.getClass() + " is not initialised");
+    return new LensClientUserContext(connection.getParams().getUser(), "");
   }
+
+  @Override
+  public void init(LensConnection connection) {
+    Preconditions.checkNotNull(connection, "connection can not be null");
+    this.connection = connection;
+  }
+
+  @Override
+  public void close() {
+
+  }
+
 }
