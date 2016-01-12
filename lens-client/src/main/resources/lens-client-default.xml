@@ -51,4 +51,14 @@
     <value>10</value>
     <description>Interval at which query progress will be polled. Interval has to be given in milliseconds</description>
   </property>
+    <property>
+        <name>lens.client.sessionResolverClass</name>
+        <value>org.apache.lens.client.LensClientSessionResolverImpl</value>
+        <description>class to provide session</description>
+    </property>
+    <property>
+        <name>lens.client.userContextResolverClass</name>
+        <value>org.apache.lens.client.LensClientUserContextResolverImpl</value>
+        <description>class to provide user context</description>
+    </property>
 </configuration>
