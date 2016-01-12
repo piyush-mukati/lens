@@ -319,9 +319,9 @@ public class LensClient {
     return this.connection.getConnectionParams(key);
   }
 
-  public APIResult closeConnection() {
+  public void closeConnection() {
     log.debug("Closing lens connection: {}", new LensConnectionParams(conf));
-    return this.connection.close();
+    this.connection.close();
   }
 
   public APIResult addJarResource(String path) {

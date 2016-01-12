@@ -60,10 +60,6 @@ public class LensConnection {
   /** The open. */
   private AtomicBoolean open = new AtomicBoolean(false);
 
-  /** The session handle. */
-
-  private LensSessionHandle sessionHandle;
-
   /**
    * Construct a connection to lens server specified by connection parameters.
    *
@@ -73,15 +69,6 @@ public class LensConnection {
     this.params = params;
   }
 
-  /**
-   * Construct a connection to lens server specified by connection parameters with an already established session
-   *
-   * @param params parameters to be used for creating a connection
-   */
-  public LensConnection(LensConnectionParams params, LensSessionHandle sessionHandle) {
-    this.params = params;
-    this.sessionHandle = sessionHandle;
-  }
 
   /**
    * Check if the connection is opened. Please note that,lens connections are persistent connections. But a session
@@ -145,14 +132,23 @@ public class LensConnection {
    * @param password the password
    * @return the lens session handle
    */
-  public LensSessionHandle open(String password) {
-    //todo from param
-    userContextResolver=new LensClientUserContextResolverImpl(this);
-    sessionResolver =new LensClientSessionResolverImpl(this);
-    final LensSessionHandle handle= sessionResolver.getSession(userContextResolver.getContext());
+  public void open(String password) {
+    final String  userContextResolverClass =params.getConf().getUserContextResolverClass();
+    final String  sessionResolverClass =params.getConf().getSessionResolverClass();
+
+    try {
+      userContextResolver= (LensClientUserContextResolver) Class.forName(userContextResolverClass).newInstance();
+      userContextResolver.init(this);
+
+      sessionResolver= (LensClientSessionResolver) Class.forName(sessionResolverClass).newInstance();
+      sessionResolver.init(this);
     open.set(true);
     log.debug("Successfully switched to database {}", params.getDbName());
-    return handle;
+    } catch (Exception e) {
+      log.error("connection error",e);
+      throw new LensClientServerConnectionException(e.getCause().getMessage(), e);
+    }
+      return;
   }
 
   public LensSessionHandle createSession(String username, String password) {
@@ -191,9 +187,10 @@ public class LensConnection {
    *
    * @return the API result
    */
+  //todo SESSION
   public APIResult attachDatabaseToSession() {
     WebTarget target = getMetastoreWebTarget();
-    APIResult result = target.path("databases").path("current").queryParam("sessionid", this.sessionHandle)
+    APIResult result = target.path("databases").path("current").queryParam("sessionid", getSessionHandle())
       .request(MediaType.APPLICATION_XML_TYPE).put(Entity.xml(params.getDbName()), APIResult.class);
     return result;
 
@@ -204,14 +201,21 @@ public class LensConnection {
    *
    * @return the API result
    */
-  public APIResult close() {
+
+  public void close() {
+    sessionResolver.close();
+    userContextResolver.close();
+    return;
+  }
+//TODO move it to session util
+  public APIResult closeSession(LensSessionHandle sessionHandle) {
     WebTarget target = getSessionWebTarget();
 
-    APIResult result = target.queryParam("sessionid", this.sessionHandle).request().delete(APIResult.class);
+    APIResult result = target.queryParam("sessionid", sessionHandle).request().delete(APIResult.class);
     if (result.getStatus() != APIResult.Status.SUCCEEDED) {
-      throw new IllegalStateException("Unable to close lens connection " + "with params " + params);
+      throw new IllegalStateException("Unable to close lens session " );
     }
-    log.debug("Lens connection closed.");
+    log.debug("Lens session closed."+ sessionHandle.toString());
     return result;
   }
 
@@ -222,10 +226,11 @@ public class LensConnection {
    * @param resourcePath the resource path
    * @return the API result
    */
+  //todo SESSION
   public APIResult addResourceToConnection(String type, String resourcePath) {
     WebTarget target = getSessionWebTarget();
     FormDataMultiPart mp = new FormDataMultiPart();
-    mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("sessionid").build(), this.sessionHandle,
+    mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("sessionid").build(), getSessionHandle(),
       MediaType.APPLICATION_XML_TYPE));
     mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("type").build(), type));
     mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("path").build(), resourcePath));
@@ -241,10 +246,11 @@ public class LensConnection {
    * @param resourcePath the resource path
    * @return the API result
    */
+  //todo SESSION
   public APIResult removeResourceFromConnection(String type, String resourcePath) {
     WebTarget target = getSessionWebTarget();
     FormDataMultiPart mp = new FormDataMultiPart();
-    mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("sessionid").build(), this.sessionHandle,
+    mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("sessionid").build(), getSessionHandle(),
       MediaType.APPLICATION_XML_TYPE));
     mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("type").build(), type));
     mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("path").build(), resourcePath));
@@ -261,7 +267,7 @@ public class LensConnection {
    */
   public List<String> listResourcesFromConnection(String type) {
     WebTarget target = getSessionWebTarget();
-    StringList result = target.path("resources/list").queryParam("sessionid", this.sessionHandle)
+    StringList result = target.path("resources/list").queryParam("sessionid", getSessionHandle())
       .queryParam("type", type).request().get(StringList.class);
     return result.getElements();
   }
@@ -287,7 +293,7 @@ public class LensConnection {
   public APIResult setConnectionParams(String key, String value) {
     WebTarget target = getSessionWebTarget();
     FormDataMultiPart mp = new FormDataMultiPart();
-    mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("sessionid").build(), this.sessionHandle,
+    mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("sessionid").build(), getSessionHandle(),
       MediaType.APPLICATION_XML_TYPE));
     mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("key").build(), key));
     mp.bodyPart(new FormDataBodyPart(FormDataContentDisposition.name("value").build(), value));
@@ -299,7 +305,7 @@ public class LensConnection {
 
   public List<String> getConnectionParams() {
     WebTarget target = getSessionWebTarget();
-    StringList list = target.path("params").queryParam("sessionid", this.sessionHandle).queryParam("verbose", true)
+    StringList list = target.path("params").queryParam("sessionid", getSessionHandle()).queryParam("verbose", true)
       .request().get(StringList.class);
     return list.getElements();
   }
@@ -312,7 +318,7 @@ public class LensConnection {
    */
   public List<String> getConnectionParams(String key) {
     WebTarget target = getSessionWebTarget();
-    StringList value = target.path("params").queryParam("sessionid", this.sessionHandle).queryParam("key", key)
+    StringList value = target.path("params").queryParam("sessionid", getSessionHandle()).queryParam("key", key)
       .request().get(StringList.class);
     return value.getElements();
   }
@@ -328,9 +334,7 @@ public class LensConnection {
    */
   @Override
   public String toString() {
-    final StringBuilder sb = new StringBuilder("LensConnection{");
-    sb.append("sessionHandle=").append(sessionHandle.getPublicId());
-    sb.append('}');
+    final StringBuilder sb = new StringBuilder("LensConnection");
     return sb.toString();
   }
   public LensSessionHandle getSessionHandle(){

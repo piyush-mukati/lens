@@ -39,8 +39,11 @@ public class LensClientConfig extends Configuration {
   /** The Constant CLIENT_PFX. */
   public static final String CLIENT_PFX = "lens.client.";
 
-  /** The Constant DBNAME_KEY. */
-  public static final String SESSION_PROVIDER = CLIENT_PFX + "session.provider";
+  public static final String SESSION_RESOLVER_CLASS = CLIENT_PFX + "sessionResolverClass";
+  public static final String DEFAULT_SESSION_RESOLVER_CLASS =  "org.apache.lens.client.LensClientSessionResolverImpl";
+
+  public static final String USER_CONTEXT_RESOLVER_CLASS = CLIENT_PFX + "userContextResolverClass";
+  public static final String DEFAULT_USER_CONTEXT_RESOLVER_CLASS =  "org.apache.lens.client.LensClientUserContextResolverImpl";
 
   /** The Constant DBNAME_KEY. */
   public static final String DBNAME_KEY = CLIENT_PFX + "dbname";
@@ -84,10 +87,6 @@ public class LensClientConfig extends Configuration {
   public static final String SESSION_FILTER_NAMES = CLIENT_PFX + "ws.request.filternames";
 
   public static final String WS_FILTER_IMPL_SFX = ".ws.filter.impl";
-
-  public String getSessionProvider() {
-    return this.get(SESSION_PROVIDER);
-  }
 
   /**
    * Get the username from config
@@ -167,4 +166,15 @@ public class LensClientConfig extends Configuration {
   public static String getWSFilterImplConfKey(String filterName) {
     return CLIENT_PFX + filterName + WS_FILTER_IMPL_SFX;
   }
+
+  public String getUserContextResolverClass(){
+    return this.get(USER_CONTEXT_RESOLVER_CLASS,DEFAULT_USER_CONTEXT_RESOLVER_CLASS);
+  };
+
+
+  public String getSessionResolverClass(){
+    return this.get(SESSION_RESOLVER_CLASS,DEFAULT_SESSION_RESOLVER_CLASS);
+  }
+
+
 }
