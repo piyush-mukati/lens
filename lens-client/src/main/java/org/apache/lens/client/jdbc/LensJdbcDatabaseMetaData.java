@@ -674,22 +674,29 @@ public class LensJdbcDatabaseMetaData implements DatabaseMetaData {
     public ResultSet getTables(String catalog, String schemaPattern, String tableNamePattern, final String[] types) throws SQLException {
 
 
-        //TODO: type, statement , table param
+        //TODO: filter by schema pattern
 
-        log.debug("getTables called {} {} {} {}",catalog,schemaPattern,tableNamePattern,types);
+      if(schemaPattern==null)schemaPattern="%";
+      if(tableNamePattern==null)tableNamePattern="%";
+      log.debug("getTables called {} {} {} {}",catalog,schemaPattern,tableNamePattern,types);
 
-        if(schemaPattern==null)schemaPattern="%";
-        if(tableNamePattern==null)tableNamePattern="%";
+      tableNamePattern=tableNamePattern.replace(".", "\\.");
+      tableNamePattern= tableNamePattern.replaceAll("\\?", ".");
+      tableNamePattern=tableNamePattern.replaceAll("%",".*");
+
+
 
 
        ArrayList<ResultRow> results= new ArrayList<ResultRow>();
        for( String tableName : mc.getAllNativeTables()){
+         if(tableName.matches(tableNamePattern)){
            List<Object> row= Arrays.asList(new Object[10]);
            row.set(2, tableName);
            row.set(3, "TABLE");
            row.set(4, "from lens jdbc client");
 
            results.add( new ResultRow(row));
+         }
         }
 
         List columns= Arrays.asList(new Object[10]);
